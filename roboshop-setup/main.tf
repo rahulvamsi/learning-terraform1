@@ -2,8 +2,8 @@ resource "aws_instance" "app" {
   count                  = length(var.components)
   ami                    = data.aws_ami.ami.image_id
   instance_type          = "t3.micro"
-  iam_instance_profile   = "SecretManager_Role_for_RoboShop_Nodes"
-  vpc_security_group_ids = ["sg-02afc752c16b2fa2e"]
+  iam_instance_profile   = "secret_role_roboshop"
+  vpc_security_group_ids = ["sg-01bfb4525cf5fcd97"]
   tags = {
     Name = "${var.components["${count.index}"]}-dev"
   }
@@ -11,7 +11,7 @@ resource "aws_instance" "app" {
 
 resource "aws_route53_record" "record" {
   count   = length(var.components)
-  zone_id = "Z05563911B5TPM0CPTZND"
+  zone_id = "Z04670291MCVC0BECZOR5"
   name    = "${var.components["${count.index}"]}-dev"
   type    = "A"
   ttl     = 30
@@ -34,7 +34,7 @@ resource "null_resource" "ansible-apply" {
 
     inline = [
       "sudo labauto clean",
-      "ansible-pull -i localhost, -U https://github.com/raghudevopsb66/roboshop-mutable-ansible roboshop.yml -e HOSTS=localhost -e APP_COMPONENT_ROLE=${var.components[count.index]} -e ENV=dev"
+      "ansible-pull -i localhost, -U https://github.com/rahulvamsi/roboshop-mutable-ansible roboshop.yml -e HOSTS=localhost -e APP_COMPONENT_ROLE=${var.components[count.index]} -e ENV=dev"
     ]
 
   }
